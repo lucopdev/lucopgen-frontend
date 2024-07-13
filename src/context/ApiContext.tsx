@@ -75,7 +75,7 @@ const ApiProvider: React.FC<ApiProviderProps> = ({ children }) => {
           throw error;
         }
       },
-      erase: async (endpoint: string, userId: string, id: string) => {
+      erase: async (endpoint: string, userId?: string | null, id?: string | null) => {
         try {
           const data = await axios.delete(`${URL_BASE}/${endpoint}/${userId}/${id}`, {
             headers: {

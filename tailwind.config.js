@@ -3,6 +3,7 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   theme: {
     extend: {
+      backdropBlur: ['responsive'],
       boxShadow: {
         'inner-md': 'inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 1px 5px rgba(0, 0, 0, 0.05)',
         'inner-lg': 'inset 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 10px 15px rgba(0, 0, 0, 0.05)',
@@ -15,5 +16,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-textshadow')],
 };
