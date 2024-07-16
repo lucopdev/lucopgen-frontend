@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiContext, ApiContextInterface } from '../../context/ApiContext';
 
 function CreateUserComponent() {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|com\.br)$/;
   const { post } = useContext<ApiContextInterface>(ApiContext as React.Context<ApiContextInterface>);
   const navigate = useNavigate();
   const [userInputs, setUserInputs] = useState({
@@ -10,17 +11,63 @@ function CreateUserComponent() {
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
   });
 
   const handleNewUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInputs({
-      ...userInputs,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.currentTarget;
+
+    if (name === 'name') {
+      const noNumber = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]*$/.test(value);
+      if (noNumber) {
+        setUserInputs({
+          ...userInputs,
+          [name]: value,
+        });
+      }
+    } else if (name === 'phone') {
+      const cleaned = ('' + value).replace(/\D/g, '');
+      const formattedPhone = cleaned.replace(/^(\d{2})(\d{0,5})(\d{0,4})$/, '($1) $2-$3').trim();
+
+      if (cleaned.length <= 11)
+        setUserInputs({
+          ...userInputs,
+          [name]: formattedPhone,
+        });
+    } else if (name === 'email') {
+      if (emailRegex) {
+        setUserInputs({
+          ...userInputs,
+          [name]: value,
+        });
+      }
+    } else {
+      setUserInputs({
+        ...userInputs,
+        [name]: value,
+      });
+    }
   };
 
-  const onCreateUser = async () => {
-    if (!userInputs.name || !userInputs.email || !userInputs.phone || !userInputs.password) {
+  const areInputsValidated = () => {
+    const validations = [
+      userInputs.name.length >= 3,
+      userInputs.email.length > 0,
+      emailRegex.test(userInputs.email),
+      userInputs.phone.length > 0,
+      userInputs.phone.length === 15,
+      userInputs.password.length > 0,
+      userInputs.confirmPassword.length > 0,
+      userInputs.password === userInputs.confirmPassword,
+    ];
+
+    return validations.every((validation) => validation === true);
+  };
+
+  const onSubmitCreation = async () => {
+    const isValidated = areInputsValidated();
+
+    if (!isValidated) {
       console.log('Preencha todos os campos');
       return;
     }
@@ -77,9 +124,17 @@ function CreateUserComponent() {
           value={userInputs.password}
           onChange={handleNewUserInputChange}
         />
+        <input
+          className="w-full h-[45px] bg-white rounded shadow-inner-md px-2 m-1"
+          type="password"
+          placeholder="Confirme sua senha"
+          name="confirmPassword"
+          value={userInputs.confirmPassword}
+          onChange={handleNewUserInputChange}
+        />
         <button
           className="w-full h-[35px] text-white font-bold border bg-green-400 rounded shadow-inner m-1"
-          onClick={onCreateUser}
+          onClick={onSubmitCreation}
         >
           Criar
         </button>

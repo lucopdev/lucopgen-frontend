@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { ApiContext, ApiContextInterface } from '../../context/ApiContext';
 import UserInterface from '../../interfaces/UserInterface';
+import cryptoRandomString from 'crypto-random-string';
 
 interface CreateAccountComponentProps {
   setUser: React.Dispatch<React.SetStateAction<UserInterface>>;
@@ -13,6 +14,20 @@ function CreateAccountComponent({ setUser }: CreateAccountComponentProps) {
     login: '',
     password: '',
   });
+
+  const fetchUsers = async () => {
+    const result = await get('users');
+    const users: UserInterface[] = result.data;
+
+    const storageUser: UserInterface = JSON.parse(localStorage.getItem('user') || '{}');
+    const userFound = users.find((user) => user.email == storageUser.email);
+
+    if (userFound) {
+      setUser(userFound);
+      localStorage.setItem('user', JSON.stringify(userFound));
+    }
+    return userFound;
+  };
 
   const onCreateNewAccount = async () => {
     const user: UserInterface = await get('users').then((data) =>
@@ -27,24 +42,21 @@ function CreateAccountComponent({ setUser }: CreateAccountComponentProps) {
         ownerId: user.id,
       };
 
-      post('accounts', newAccount);
+      const response = await post('accounts', newAccount);
 
-      const updateUser = {
-        ...user,
-        accounts: [...(user.accounts || []), newAccount],
-      };
+      if (response) {
+        const userFetched = await fetchUsers();
+        setUser(userFetched as UserInterface);
 
-      localStorage.setItem('user', JSON.stringify(updateUser));
-      setUser(updateUser as UserInterface);
+        setAccountInputs({
+          name: '',
+          login: '',
+          password: '',
+        });
+      }
     } else {
       console.error('User not found');
     }
-
-    setAccountInputs({
-      name: '',
-      login: '',
-      password: '',
-    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,13 +66,28 @@ function CreateAccountComponent({ setUser }: CreateAccountComponentProps) {
     });
   };
 
+  const onGenerateComplexPassword = () => {
+    const newPassword = cryptoRandomString({
+      length: 12,
+      type: 'alphanumeric',
+    });
+
+    setAccountInputs({
+      ...accountInputs,
+      password: newPassword,
+    });
+  };
+
   return (
-    <div className="w-[300px] mx-auto max-md:w-full max-md:min-w-[250px] max-md:m-0 max-md:my-2 min-w-[600px] h-[300px] bg-blue-300 flex flex-col items-center justify-center p-5 my-5">
-      <div className="flex flex-col items-center justify-between w-[80%] h-full">
-        <h1 className="text-[25px] font-bold text-white text-shadow-sm">Add nova conta</h1>
-        <div className="flex flex-col items-center w-[100%]">
+    <div className="min-w-[500px] w-[500px] mx-auto max-md:min-w-[250px] max-sm:w-[100%] h-[300px] bg-slate-300 rounded-3xl shadow-low flex flex-col items-center justify-center p-5 my-5 relative">
+      <div className="flex flex-col items-center justify-between w-[100%] p-2 h-full">
+        {/* <button className="text-[25px] text-slate-500 absolute top-5 right-5">
+          <IoMdClose />
+        </button> */}
+        <h1 className="text-[25px] font-bold text-slate-600 text-shadow-sm">Nova conta</h1>
+        <div className="flex flex-col items-start w-full">
           <input
-            className="h-10 w-[100%] max-w-[400px] p-2 border-2 shadow-inner rounded my-[1px]"
+            className="h-10 w-full p-2 border-2 shadow-inner rounded my-[1px]"
             type="text"
             placeholder="Account name"
             name="name"
@@ -68,24 +95,32 @@ function CreateAccountComponent({ setUser }: CreateAccountComponentProps) {
             onChange={handleInputChange}
           />
           <input
-            className="h-10 w-[100%] max-w-[400px] p-2 border-2 shadow-inner rounded my-[1px]"
+            className="h-10 w-full p-2 border-2 shadow-inner rounded my-[1px]"
             type="text"
             placeholder="Login"
             name="login"
             value={accountInputs.login}
             onChange={handleInputChange}
           />
-          <input
-            className="h-10 w-[100%] max-w-[400px] p-2 border-2 shadow-inner rounded my-[1px]"
-            type="text"
-            placeholder="Password"
-            name="password"
-            value={accountInputs.password}
-            onChange={handleInputChange}
-          />
+          <div className="flex w-full">
+            <input
+              className="h-10 w-full p-2 border-2 shadow-inner rounded my-[1px]"
+              type="text"
+              placeholder="Password"
+              name="password"
+              value={accountInputs.password}
+              onChange={handleInputChange}
+            />
+            <button
+              className="bg-sky-500 w-[150px] h-10 text-[10px] text-white rounded ml-1 px-1 leading-[15px]"
+              onClick={onGenerateComplexPassword}
+            >
+              Gerar senha complexa
+            </button>
+          </div>
         </div>
         <button
-          className="bg-blue-500 h-10 w-[100%] max-w-[400px] p-2 shadow-inner rounded my-[1px]"
+          className="bg-sky-500 h-10 w-full p-2 shadow-inner rounded my-[1px] text-white"
           onClick={onCreateNewAccount}
         >
           Submit

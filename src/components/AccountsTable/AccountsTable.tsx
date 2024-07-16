@@ -22,10 +22,10 @@ function AccountsTable({ user, onDeleteAccount }: AccountsTableProps) {
               className="flex items-center justify-between w-[100%] max-w-[250px] h-[150px] m-2 p-4 bg-slate-500 shadow-lg rounded relative"
             >
               <div className="w-full h-full flex flex-col items-start justify-between">
-                <p className="flex items-center justify-center text-white font-bold font-anton text-[20px] bg-slate-400 w-[80%] p-1 rounded uppercase">
+                <p className="flex items-center justify-center text-white font-bold font-anton text-[20px] bg-slate-400 w-[80%] h-[40px] p-1 rounded uppercase">
                   {account.name}
                 </p>
-                <p className="flex items-center justify-between text-white bg-slate-700 px-2 py-1 w-[100%] relative">
+                <p className="flex items-center justify-between text-white bg-slate-700 px-2 py-1 w-[100%] h-[30px] relative">
                   <span className="w-[100%] overflow-x-scroll mr-6">{account.login}</span>
                   <span
                     className="flex items-center absolute top-0 right-0 bg-slate-700 h-[30px] px-2 cursor-pointer"
@@ -34,7 +34,7 @@ function AccountsTable({ user, onDeleteAccount }: AccountsTableProps) {
                     <FaRegCopy />
                   </span>
                 </p>
-                <p className="flex items-center justify-between text-white bg-slate-700 px-2 py-1 w-[100%] overflow-hidden relative">
+                <p className="flex items-center justify-between text-white bg-slate-700 px-2 py-1 w-[100%] h-[30px] overflow-hidden relative">
                   {account.password}
                   <span
                     className="absolute flex items-center top-0 right-0 h-[30px] bg-slate-700 px-2 cursor-pointer"

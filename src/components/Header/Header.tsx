@@ -31,11 +31,14 @@ function Header({ user, onAddBtn }: HeaderProps) {
         </button>
       </div>
       <div className="w-full h-8 absolute -bottom-4 left-0 mx-auto">
-        <div className="w-[200px] h-8 bg-sky-500 mx-auto flex items-center justify-center rounded-xl">
-          <span className="text-[30px] text-white" onClick={onAddBtn}>
+        <button
+          className="w-[200px] h-8 bg-sky-500 mx-auto flex items-center justify-center rounded-xl"
+          onClick={onAddBtn}
+        >
+          <span className="text-[30px] text-white">
             <IoMdAdd />
           </span>
-        </div>
+        </button>
       </div>
     </header>
   );

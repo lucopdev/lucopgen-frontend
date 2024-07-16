@@ -18,18 +18,11 @@ function Home() {
       };
 
       setUser(updateUser as UserInterface);
-      erase('accounts', user.id.toString(), id.toString());
+      erase('accounts', String(user.id), String(id));
     }
   };
 
-  useEffect(() => {
-    const storageUser = JSON.parse(localStorage.getItem('user') || '{}');
-    setUser(storageUser);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(user));
-  }, [user]);
+  useEffect(() => {}, [user]);
 
   const onAddBtn = () => {
     setIsAddMenuOpen(!isAddMenuOpen);
@@ -39,7 +32,14 @@ function Home() {
     <div className="p-4">
       <Header user={user} onAddBtn={onAddBtn} />
       <div className="flex flex-col mt-[80px]">
-        {isAddMenuOpen && <CreateAccountComponent setUser={setUser} />}
+        <div
+          className={`w-full translation-all duration-500 ease-in-out transform overflow-hidden ${
+            isAddMenuOpen ? 'translate-y-0 max-h-[500px]' : '-translate-y-[500px] max-h-0'
+          }`}
+        >
+          <CreateAccountComponent setUser={setUser} />
+        </div>
+
         <AccountsTable user={user} onDeleteAccount={onDeleteAccount} />
       </div>
     </div>
