@@ -99,4 +99,4 @@ cd lucopgen
 <p>Este projeto está licenciado sob a Licença MIT - veja o arquivo <code><a href="LICENSE">LICENSE</a></code> para mais detalhes.</p>
 
 <h2>Contato</h2>
-<p>Para mais informações ou suporte, entre em contato pelo email: <code>seu-email@exemplo.com</code>.</p>
+<p>Para mais informações ou suporte, entre em contato pelo email: <code>lucopdev@gmail.com</code>.</p>
